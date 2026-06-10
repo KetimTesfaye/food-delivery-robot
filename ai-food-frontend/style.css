@@ -1,0 +1,204 @@
+/* Global */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  background-color: #f9f9f9;
+  color: #333;
+}
+
+header {
+  background-color: #0033a0; /* EAII Blue */
+  color: #fff;
+  text-align: center;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+}
+
+header .logo {
+  width: 80px;
+  display: block;
+  margin: 0 auto 10px;
+}
+
+h1, h2, h3 {
+  margin: 10px 0;
+}
+ h2, h3 {
+  margin: 10px 0;
+  color: #002080;
+ }
+/* Table Selector */
+.table-selection {
+  text-align: center;
+  margin: 20px;
+}
+
+select {
+  padding: 10px 15px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 2px solid #ff6600; /* EAII Orange */
+  background-color: #fff;
+  color: #0033a0;
+  font-weight: bold;
+}
+
+/* Menus */
+.menu {
+  margin: 20px;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.food-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+.food-card {
+  background-color: #e6f0ff;
+  border-radius: 12px;
+  width: 150px;
+  text-align: center;
+  padding: 15px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.food-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+}
+
+.food-card img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.order-btn {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background-color: #ff6600; /* EAII Orange */
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.order-btn:hover {
+  background-color: #e65c00;
+}
+
+/* Order Summary */
+.order-summary {
+  margin: 20px;
+  color: #002080;
+}
+
+.tables-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+.table-card {
+  background-color: #fff;
+  border-radius: 12px;
+  width: 180px;
+  padding: 15px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.table-card ul {
+  list-style: none;
+  padding: 0;
+  min-height: 50px;
+}
+
+.confirm-btn {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background-color: #0033a0; /* EAII Blue */
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.cancel-btn {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background-color: #0033a0; /* EAII Blue */
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+
+/* Orange confirmed state */
+.confirmed {
+  background-color: #ff6600 !important; /* EAII Orange */
+}
+
+.confirm-btn:hover {
+  background-color: #002080;
+}
+
+.canceled {
+  background-color: #ff6600 !important;
+}
+.cancel-btn:hover {
+  background-color: #002080;
+}
+/* Footer */
+footer {
+  background-color: #0033a0;
+  color: #fff;
+  text-align: center;
+  padding: 10px;
+  margin-top: 30px;
+}
+
+/* This makes the <li> hold the 'X' button correctly */
+.order-summary ul li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 0;
+  border-bottom: 1px dashed #ddd;
+}
+
+/* This styles the new 'X' button */
+.remove-item-btn {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 12px;
+  line-height: 20px; /* Center the 'X' vertically */
+  text-align: center;
+  padding: 0;
+}
+
+.remove-item-btn:hover {
+  background: #c0392b;
+}
