@@ -29,11 +29,10 @@ const amharicMap = {
 };
 
 document.addEventListener("DOMContentLoaded", () => {
-  // --- DARK MODE LOGIC START ---
+  // --- DARK MODE LOGIC ---
   const darkModeToggle = document.getElementById('darkModeToggle');
   const body = document.body;
 
-  // Check for saved user preference on load
   const currentTheme = localStorage.getItem('theme');
   if (currentTheme === 'dark') {
       body.classList.add('dark-mode');
@@ -51,10 +50,58 @@ document.addEventListener("DOMContentLoaded", () => {
           darkModeToggle.textContent = '🌙';
       }
       
-      // Save user preference
       localStorage.setItem('theme', theme);
   });
-  // --- DARK MODE LOGIC END ---
+
+  // --- ROBOT IDLE SCREEN & VOICE/MOUTH LOGIC ---
+  const idleScreen = document.getElementById("idle-screen");
+  const robotMouth = document.getElementById("robot-mouth");
+  let idleTimer;
+  const IDLE_TIMEOUT_MS = 20000; // 20 seconds inactivity triggers idle screen
+
+  function playIdleGreeting() {
+    // 1. Start mouth animation
+    if (robotMouth) robotMouth.classList.add("speaking");
+
+    // 2. Speak English Greeting
+    speakText("Hello! I am your friendly service robot. Ready to take your order.", "en");
+
+    // 3. Speak Amharic Greeting after 4 seconds
+    setTimeout(() => {
+      speakAmharic("ሰላም! እኔ የእርስዎ ወዳጃዊ የአገልግሎት ሮቦት ነኝ። ትዕዛዝዎን ለመቀበል ዝግጁ ነኝ።");
+    }, 4500);
+
+    // 4. Stop mouth animation after 9 seconds
+    setTimeout(() => {
+      if (robotMouth) robotMouth.classList.remove("speaking");
+    }, 9500);
+  }
+
+  function showIdleScreen() {
+    idleScreen.classList.remove("hidden");
+    playIdleGreeting();
+  }
+
+  function hideIdleScreen() {
+    idleScreen.classList.add("hidden");
+    if (robotMouth) robotMouth.classList.remove("speaking");
+    speechSynthesis.cancel(); // Stop talking on tap
+    resetIdleTimer();
+  }
+
+  function resetIdleTimer() {
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(showIdleScreen, IDLE_TIMEOUT_MS);
+  }
+
+  window.addEventListener("mousemove", resetIdleTimer);
+  window.addEventListener("mousedown", resetIdleTimer);
+  window.addEventListener("keypress", resetIdleTimer);
+  window.addEventListener("touchstart", resetIdleTimer);
+  window.addEventListener("click", resetIdleTimer);
+
+  idleScreen.addEventListener("click", hideIdleScreen);
+  resetIdleTimer();
 
   const orderBtns = document.querySelectorAll(".order-btn");
   const confirmBtns = document.querySelectorAll(".confirm-btn");
@@ -93,7 +140,6 @@ document.addEventListener("DOMContentLoaded", () => {
       li.appendChild(removeBtn);
       orderList.appendChild(li);
       
-      // Speech feedback
       speakText(`${item} added to Table ${currentTable}`, "en");
       const amharicItem = amharicMap[item] || item;
       const amharicPhrase = amharicMap["added_to_table"];

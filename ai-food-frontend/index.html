@@ -15,11 +15,36 @@
 <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <!-- Robot Idle Screen Overlay -->
+  <div id="idle-screen" class="idle-overlay">
+    <div class="robot-face">
+      <div class="eye left-eye"><div class="pupil"></div></div>
+      <div class="eye right-eye"><div class="pupil"></div></div>
+    </div>
+
+    <!-- Robotic Animated Mouth -->
+    <div class="mouth" id="robot-mouth">
+      <span class="bar"></span>
+      <span class="bar"></span>
+      <span class="bar"></span>
+      <span class="bar"></span>
+      <span class="bar"></span>
+    </div>
+
+    <div class="greeting-content">
+      <h2>HELLO! I AM YOUR FRIENDLY SERVICE ROBOT.</h2>
+      <p class="sub-greeting">READY TO TAKE YOUR ORDER.</p>
+      <p class="amharic-greeting">ሰላም! እኔ የእርስዎ ወዳጃዊ የአገልግሎት ሮቦት ነኝ። ትዕዛዝዎን ለመቀበል ዝግጁ ነኝ።</p>
+    </div>
+    <div class="tap-to-wake">
+      <span>👆 Tap anywhere to open menu</span>
+    </div>
+  </div>
+
   <header>
     <div class="header-container">
       <img src="assets/aologo (1).png" alt="Institute Logo" class="logo" />
       <h1>AI Service Robot Menu</h1>
-      <!-- Dark Mode Toggle Button -->
       <button id="darkModeToggle" class="theme-btn" title="Toggle Dark Mode">🌙</button>
     </div>
   </header>
