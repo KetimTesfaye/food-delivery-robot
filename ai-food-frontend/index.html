@@ -16,8 +16,12 @@
 </head>
 <body>
   <header>
-    <img src="assets/aologo (1).png" alt="Institute Logo" class="logo" />
-    <h1>AI Service Robot Menu</h1>
+    <div class="header-container">
+      <img src="assets/aologo (1).png" alt="Institute Logo" class="logo" />
+      <h1>AI Service Robot Menu</h1>
+      <!-- Dark Mode Toggle Button -->
+      <button id="darkModeToggle" class="theme-btn" title="Toggle Dark Mode">🌙</button>
+    </div>
   </header>
 
   <main>
@@ -42,7 +46,6 @@
           <h3>Injera Firfir</h3>
           <button class="order-btn">Add</button>
         </div>
-        <div class="food-grid">
         <div class="food-card" data-item="pasta">
           <img src="assets/pasta.png" alt="pasta" />
           <h3>pasta</h3>
@@ -97,28 +100,24 @@
           <ul id="order-list-1"></ul>
           <button class="confirm-btn" data-table="1">Confirm Order</button>
           <button class="cancel-btn" data-table="1">Cancel</button>
-
         </div>
         <div class="table-card">
           <h3>Table 2</h3>
           <ul id="order-list-2"></ul>
           <button class="confirm-btn" data-table="2">Confirm Order</button>
           <button class="cancel-btn" data-table="2">Cancel</button>
-
         </div>
         <div class="table-card">
           <h3>Table 3</h3>
           <ul id="order-list-3"></ul>
           <button class="confirm-btn" data-table="3">Confirm Order</button>
           <button class="cancel-btn" data-table="3">Cancel</button>
-
         </div>
         <div class="table-card">
           <h3>Table 4</h3>
           <ul id="order-list-4"></ul>
           <button class="confirm-btn" data-table="4">Confirm Order</button>
           <button class="cancel-btn" data-table="4">Cancel</button>
-
         </div>
         <div class="table-card">
           <h3>Table 5</h3>

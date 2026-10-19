@@ -11,10 +11,10 @@ socket.onerror = (error) => {
   alert('Error: Could not connect to the order server. Please refresh.');
 };
 
-// --- THIS IS YOUR NEW TRANSLATION MAP ---
+// --- TRANSLATION MAP ---
 const amharicMap = {
   "Injera Firfir": "እንጀራ ፍርፍር",
-  "pastar": "ፓስታ", // "pastar" is what's in your HTML
+  "pasta": "ፓስታ", 
   "Shiro Wot": "ሽሮ ወጥ",
   "Doro Wot": "ዶሮ ወጥ",
   "Tea": "ሻይ",
@@ -27,10 +27,35 @@ const amharicMap = {
   "order_confirmed_for_table": "የጠረጴዛ ትዕዛዝ ፀድቋል",
   "order_canceled_for_table": "የጠረጴዛ ትዕዛዝ ተሰርዟል"
 };
-// ----------------------------------------
-
 
 document.addEventListener("DOMContentLoaded", () => {
+  // --- DARK MODE LOGIC START ---
+  const darkModeToggle = document.getElementById('darkModeToggle');
+  const body = document.body;
+
+  // Check for saved user preference on load
+  const currentTheme = localStorage.getItem('theme');
+  if (currentTheme === 'dark') {
+      body.classList.add('dark-mode');
+      darkModeToggle.textContent = '☀️';
+  }
+
+  darkModeToggle.addEventListener('click', () => {
+      body.classList.toggle('dark-mode');
+      
+      let theme = 'light';
+      if (body.classList.contains('dark-mode')) {
+          theme = 'dark';
+          darkModeToggle.textContent = '☀️';
+      } else {
+          darkModeToggle.textContent = '🌙';
+      }
+      
+      // Save user preference
+      localStorage.setItem('theme', theme);
+  });
+  // --- DARK MODE LOGIC END ---
+
   const orderBtns = document.querySelectorAll(".order-btn");
   const confirmBtns = document.querySelectorAll(".confirm-btn");
   const cancelBtns = document.querySelectorAll(".cancel-btn");
@@ -45,7 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
     currentTable = parseInt(e.target.value);
   });
 
-  // --- 'orderBtns' SECTION (UPDATED) ---
+  // --- 'orderBtns' SECTION ---
   orderBtns.forEach(btn => {
     btn.addEventListener("click", () => {
       const item = btn.parentElement.getAttribute("data-item");
@@ -68,15 +93,15 @@ document.addEventListener("DOMContentLoaded", () => {
       li.appendChild(removeBtn);
       orderList.appendChild(li);
       
-      // --- UPDATED SPEECH ---
+      // Speech feedback
       speakText(`${item} added to Table ${currentTable}`, "en");
       const amharicItem = amharicMap[item] || item;
       const amharicPhrase = amharicMap["added_to_table"];
-      setTimeout(() => speakAmharic(`${amharicItem} ${amharicPhrase} ${currentTable}`), 1500); // Speak Amharic after 1.5s
+      setTimeout(() => speakAmharic(`${amharicItem} ${amharicPhrase} ${currentTable}`), 1500);
     });
   });
 
-  // --- 'removeItemFromOrder' FUNCTION (No speech change) ---
+  // --- 'removeItemFromOrder' FUNCTION ---
   function removeItemFromOrder(table, id) {
     orders[table] = orders[table].filter(order => order.id !== id);
     const liToRemove = document.querySelector(`li[data-id="${id}"]`);
@@ -91,7 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
     socket.send(JSON.stringify(updateData));
   }
 
-  // --- 'confirmBtns' SECTION (UPDATED) ---
+  // --- 'confirmBtns' SECTION ---
   confirmBtns.forEach(btn => {
     btn.addEventListener("click", () => {
       const table = btn.getAttribute("data-table");
@@ -103,10 +128,9 @@ document.addEventListener("DOMContentLoaded", () => {
       alert(`Order for Table ${table} is confirmed!`);
       btn.classList.add("confirmed");
       
-      // --- UPDATED SPEECH ---
       speakText(`Order for Table ${table} is confirmed.`, "en");
       const amharicPhrase = amharicMap["order_confirmed_for_table"];
-      setTimeout(() => speakAmharic(`${amharicPhrase} ${table}`), 1500); // Speak Amharic
+      setTimeout(() => speakAmharic(`${amharicPhrase} ${table}`), 1500);
       
       const orderData = {
         type: 'order',
@@ -133,7 +157,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // --- 'cancelBtns' SECTION (UPDATED) ---
+  // --- 'cancelBtns' SECTION ---
   cancelBtns.forEach(btn => {
     btn.addEventListener("click", () => {
       const table = btn.getAttribute("data-table");
@@ -144,10 +168,9 @@ document.addEventListener("DOMContentLoaded", () => {
       
       alert(`Order for Table ${table} has been canceled.`);
       
-      // --- UPDATED SPEECH ---
       speakText(`Order for Table ${table} has been canceled.`, "en");
       const amharicPhrase = amharicMap["order_canceled_for_table"];
-      setTimeout(() => speakAmharic(`${amharicPhrase} ${table}`), 1500); // Speak Amharic
+      setTimeout(() => speakAmharic(`${amharicPhrase} ${table}`), 1500);
 
       const cancelData = {
         type: 'cancel',
@@ -157,24 +180,21 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // --- 'speakText' FUNCTION (UPDATED) ---
-  // This now searches for a female English voice
+  // --- 'speakText' FUNCTION ---
   function speakText(text, lang) {
     if (lang !== "en") return; 
     
     const utterance = new SpeechSynthesisUtterance(text);
     const voices = speechSynthesis.getVoices();
     
-    // Try to find a female English voice
     utterance.voice = voices.find(v => v.lang.includes("en") && v.name.toLowerCase().includes("female"))
-                      || voices.find(v => v.lang.includes("en")) // Fallback to any English voice
-                      || voices[0]; // Fallback to the first voice
-                      
+                        || voices.find(v => v.lang.includes("en")) 
+                        || voices[0]; 
+                        
     speechSynthesis.speak(utterance);
   }
 
-  // --- NEW 'speakAmharic' FUNCTION ---
-  // This uses the Google Translate free API
+  // --- 'speakAmharic' FUNCTION ---
   function speakAmharic(text) {
     console.log(`Requesting Amharic: ${text}`);
     const encodedText = encodeURIComponent(text);
@@ -183,9 +203,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const audio = new Audio(audioUrl);
     audio.play().catch(e => console.error("Audio play failed:", e));
   }
-  // ------------------------------------
 
-  // This part is important for Chrome to load voices
   if (typeof speechSynthesis !== 'undefined' && speechSynthesis.onvoiceschanged !== undefined) {
     speechSynthesis.onvoiceschanged = () => { speechSynthesis.getVoices(); };
   }

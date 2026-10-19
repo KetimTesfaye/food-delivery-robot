@@ -1,17 +1,48 @@
+/* Color Variables */
+:root {
+  --bg-color: #f9f9f9;
+  --text-color: #333333;
+  --card-bg: #fff;
+  --food-card-bg: #e6f0ff;
+  --heading-color: #002080;
+  --header-bg: #0033a0;
+  --border-color: #ddd;
+}
+
+/* Dark Mode Theme Overrides */
+body.dark-mode {
+  --bg-color: #121212;
+  --text-color: #e0e0e0;
+  --card-bg: #1e1e1e;
+  --food-card-bg: #2a2a2a;
+  --heading-color: #6699ff;
+  --header-bg: #001a66;
+  --border-color: #444;
+}
+
 /* Global */
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   margin: 0;
-  background-color: #f9f9f9;
-  color: #333;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 header {
-  background-color: #0033a0; /* EAII Blue */
+  background-color: var(--header-bg);
   color: #fff;
   text-align: center;
   padding: 20px;
   box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+  position: relative;
+}
+
+.header-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
 }
 
 header .logo {
@@ -20,13 +51,36 @@ header .logo {
   margin: 0 auto 10px;
 }
 
+/* Dark Mode Toggle Button Styling */
+.theme-btn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.theme-btn:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
 h1, h2, h3 {
   margin: 10px 0;
 }
- h2, h3 {
-  margin: 10px 0;
-  color: #002080;
- }
+
+h2, h3 {
+  color: var(--heading-color);
+}
+
 /* Table Selector */
 .table-selection {
   text-align: center;
@@ -38,8 +92,8 @@ select {
   font-size: 16px;
   border-radius: 8px;
   border: 2px solid #ff6600; /* EAII Orange */
-  background-color: #fff;
-  color: #0033a0;
+  background-color: var(--card-bg);
+  color: var(--text-color);
   font-weight: bold;
 }
 
@@ -47,9 +101,10 @@ select {
 .menu {
   margin: 20px;
   padding: 20px;
-  background-color: #fff;
+  background-color: var(--card-bg);
   border-radius: 12px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  transition: background-color 0.3s ease;
 }
 
 .food-grid {
@@ -60,13 +115,13 @@ select {
 }
 
 .food-card {
-  background-color: #e6f0ff;
+  background-color: var(--food-card-bg);
   border-radius: 12px;
   width: 150px;
   text-align: center;
   padding: 15px;
   box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s, background-color 0.3s ease;
 }
 
 .food-card:hover {
@@ -100,7 +155,6 @@ select {
 /* Order Summary */
 .order-summary {
   margin: 20px;
-  color: #002080;
 }
 
 .tables-container {
@@ -111,12 +165,13 @@ select {
 }
 
 .table-card {
-  background-color: #fff;
+  background-color: var(--card-bg);
   border-radius: 12px;
   width: 180px;
   padding: 15px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
   text-align: center;
+  transition: background-color 0.3s ease;
 }
 
 .table-card ul {
@@ -125,7 +180,7 @@ select {
   min-height: 50px;
 }
 
-.confirm-btn {
+.confirm-btn, .cancel-btn {
   margin-top: 10px;
   padding: 8px 12px;
   background-color: #0033a0; /* EAII Blue */
@@ -137,53 +192,33 @@ select {
   transition: background 0.2s;
 }
 
-.cancel-btn {
-  margin-top: 10px;
-  padding: 8px 12px;
-  background-color: #0033a0; /* EAII Blue */
-  border: none;
-  border-radius: 8px;
-  color: #fff;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-
-/* Orange confirmed state */
 .confirmed {
   background-color: #ff6600 !important; /* EAII Orange */
 }
 
-.confirm-btn:hover {
+.confirm-btn:hover, .cancel-btn:hover {
   background-color: #002080;
 }
 
-.canceled {
-  background-color: #ff6600 !important;
-}
-.cancel-btn:hover {
-  background-color: #002080;
-}
 /* Footer */
 footer {
-  background-color: #0033a0;
+  background-color: var(--header-bg);
   color: #fff;
   text-align: center;
   padding: 10px;
   margin-top: 30px;
+  transition: background-color 0.3s ease;
 }
 
-/* This makes the <li> hold the 'X' button correctly */
+/* Order summary item layout */
 .order-summary ul li {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 5px 0;
-  border-bottom: 1px dashed #ddd;
+  border-bottom: 1px dashed var(--border-color);
 }
 
-/* This styles the new 'X' button */
 .remove-item-btn {
   background: #e74c3c;
   color: white;
@@ -194,7 +229,7 @@ footer {
   cursor: pointer;
   font-weight: bold;
   font-size: 12px;
-  line-height: 20px; /* Center the 'X' vertically */
+  line-height: 20px;
   text-align: center;
   padding: 0;
 }
