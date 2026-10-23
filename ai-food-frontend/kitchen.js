@@ -1,107 +1,14 @@
-// kitchen.js
-
-const SERVER_URL = 'wss://order-server-p529.onrender.com';
-const ordersContainer = document.getElementById('orders-container');
+const API_BASE = (window.__SMART_RESTAURANT_API__ || `${window.location.origin}/api/v1`).replace(/\/$/, '');
+let accessToken = localStorage.getItem('restaurant_access_token') || '';
 const statusDiv = document.getElementById('status');
-
-function connect() {
-  const socket = new WebSocket(SERVER_URL);
-
-  socket.onopen = () => {
-    console.log('Connected to server');
-    statusDiv.textContent = 'Connected ✅';
-    statusDiv.style.color = 'green';
-  };
-
-  // --- 'onmessage' SECTION (No change) ---
-  socket.onmessage = (event) => {
-    try {
-      console.log('Received message:', event.data);
-      const message = JSON.parse(event.data);
-
-      if (message.type === 'order') {
-        displayOrder(message);
-      } else if (message.type === 'cancel') {
-        removeOrder(message.table);
-      } else if (message.type === 'item-remove') {
-        removeItem(message.id);
-      }
-      
-    } catch (error) {
-      console.error('Error parsing message data:', error);
-    }
-  };
-
-  socket.onclose = () => {
-    console.log('Disconnected. Trying to reconnect in 3 seconds...');
-    statusDiv.textContent = 'Disconnected ❌. Reconnecting...';
-    statusDiv.style.color = 'red';
-    setTimeout(connect, 3000);
-  };
-
-  socket.onerror = (error) => {
-    console.error('WebSocket Error:', error);
-    statusDiv.textContent = 'Connection Error ❌';
-    statusDiv.style.color = 'red';
-  };
+const ordersContainer = document.getElementById('orders-container');
+async function request(path, options = {}) {
+  const response = await fetch(`${API_BASE}${path}`, { ...options, headers: { 'Content-Type': 'application/json', ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}), ...(options.headers || {}) } });
+  const data = await response.json().catch(() => ({})); if (!response.ok) throw new Error(data.detail || `HTTP ${response.status}`); return data;
 }
-
-// --- 'displayOrder' SECTION (HEAVILY UPDATED) ---
-// This function now finds an existing ticket or creates a new one
-function displayOrder(order) {
-  // Try to find an existing ticket for this table
-  let ticket = document.querySelector(`.order-ticket[data-table="${order.table}"]`);
-  let itemList;
-  
-  if (ticket) {
-    // Ticket exists, just find the <ul> inside it
-    itemList = ticket.querySelector('ul');
-    console.log(`Adding items to existing ticket for Table ${order.table}`);
-  } else {
-    // No ticket exists, so create a new one
-    console.log(`Creating new ticket for Table ${order.table}`);
-    ticket = document.createElement('div');
-    ticket.className = 'order-ticket';
-    ticket.dataset.table = order.table; 
-
-    const tableHeader = document.createElement('h2');
-    tableHeader.textContent = `Table ${order.table}`;
-    ticket.appendChild(tableHeader);
-
-    // Create the <ul> for the items
-    itemList = document.createElement('ul');
-    ticket.appendChild(itemList);
-    
-    // Add the new ticket to the top of the container
-    ordersContainer.prepend(ticket);
-  }
-  
-  // Now, add the new items to the itemList (whether it's new or old)
-  order.items.forEach(itemObject => {
-    const li = document.createElement('li');
-    li.textContent = itemObject.item;
-    li.dataset.id = itemObject.id;
-    itemList.appendChild(li);
-  });
-}
-
-// --- 'removeOrder' SECTION (No change) ---
-// This function removes the ENTIRE ticket
-function removeOrder(tableNumber) {
-  const ticketToRemove = document.querySelector(`.order-ticket[data-table="${tableNumber}"]`);
-  if (ticketToRemove) {
-    ticketToRemove.remove();
-  }
-}
-
-// --- 'removeItem' SECTION (No change) ---
-// This function removes a SINGLE item from a ticket
-function removeItem(id) {
-  const liToRemove = document.querySelector(`li[data-id="${id}"]`);
-  if (liToRemove) {
-    liToRemove.remove();
-  }
-}
-
-// Start the connection
-connect();
+function actions(order) { const map = { PENDING: ['accept'], ACCEPTED: ['start-preparation'], PREPARING: ['ready'], READY_FOR_PICKUP: ['ready-for-dispatch'] }; return (map[order.status] || []).map(action => `<button data-id="${order.id}" data-action="${action}">${action.replaceAll('-', ' ')}</button>`).join('') + (['PENDING', 'ACCEPTED', 'PREPARING'].includes(order.status) ? `<button data-id="${order.id}" data-action="cancel">cancel</button>` : ''); }
+function render(orders) { ordersContainer.innerHTML = orders.map(order => `<article class="order-ticket"><h2>${order.code} · ${order.table_label}</h2><p class="state">${order.status}</p><ul>${(order.items || []).map(item => `<li>${item.qty} × ${item.name}</li>`).join('')}</ul><div>${actions(order)}</div></article>`).join('') || '<p>No open orders.</p>'; ordersContainer.querySelectorAll('[data-action]').forEach(button => button.addEventListener('click', () => act(button.dataset.id, button.dataset.action))); }
+async function load() { try { render(await request('/orders?limit=200')); statusDiv.textContent = 'Connected ✅'; statusDiv.style.color = 'green'; } catch (error) { statusDiv.textContent = error.message; statusDiv.style.color = 'red'; } }
+async function act(id, action) { try { await request(`/orders/${id}/${action}`, { method: 'POST', body: JSON.stringify(action === 'cancel' ? { reason: 'Kitchen cancelled' } : {}) }); await load(); } catch (error) { alert(error.message); } }
+async function login() { try { const result = await request('/auth/login', { method: 'POST', body: JSON.stringify({ username: document.getElementById('username').value.trim(), password: document.getElementById('password').value }) }); accessToken = result.access_token; localStorage.setItem('restaurant_access_token', accessToken); document.getElementById('login').hidden = true; await load(); } catch (error) { document.getElementById('login-error').textContent = error.message; } }
+document.getElementById('login-button').addEventListener('click', login); document.getElementById('refresh').addEventListener('click', load); if (accessToken) { document.getElementById('login').hidden = true; load(); }
